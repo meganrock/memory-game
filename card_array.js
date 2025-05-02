@@ -2,39 +2,61 @@
 let match_count=0;
 let last_match_code = null;
 let revealed=0;
-var timer = 120;
+var timer=0;
+// var timer = 120;
 var card_rows = 0;
 var card_cols = 0;
 var correct_audio = new Audio('correct_ding.mp3');
 var card_flip_audio = new Audio('card_flip.ogg');
-var win_audio = new Audio('winning_tune.ogg');          // Charm by Scrampunk -- https://freesound.org/s/344696/ -- License: Attribution 4.0
+var win_audio = new Audio('winning_tune.ogg');          
+var game_over_audio= new Audio('game_over.wav');  
 var match_count_html = document.getElementById('match_counter');
 var game_timer_html = document.getElementById('game_timer');
 var announcement = document.getElementById('announcement');
-
+var timer_setting;
 
 //function to determine the size of the grid
 function defineGrid(level){
   if (level == 'easy'){
     card_rows = 3;
     card_cols= 8;
-    timer = 90;
+    if (timer_setting == "up"){
+      timer = 0;
+    } else if (timer_setting == "down"){
+    timer = 120;
+    }
   } else if (level == 'medium'){
     card_rows = 4;
     card_cols= 9;
-    timer = 120; 
+    if (timer_setting == "up"){
+      timer = 0;
+    } else if (timer_setting == "down"){
+    timer = 150;
+    } 
   }else if (level == 'hard'){
     card_rows = 5;
     card_cols= 10;
-    timer = 150; 
+    if (timer_setting == "up"){
+      timer = 0;
+    } else if (timer_setting == "down"){
+    timer = 180;
+    }
   }else if (level == 'advanced'){
     card_rows = 6;
     card_cols= 10;
-    timer = 180; 
+    if (timer_setting == "up"){
+      timer = 0;
+    } else if (timer_setting == "down"){
+    timer = 210;
+    }
   }else if (level == 'expert'){
     card_rows = 6;
     card_cols= 12;
-    timer = 240; 
+    if (timer_setting == "up"){
+      timer = 0;
+    } else if (timer_setting == "down"){
+    timer = 270;
+    }
   }
 
 }
@@ -83,10 +105,9 @@ function makeRows(rows, cols) {
 
 //function to determine behavior when a card is clicked 
 function clicking(cell_id) {
-  if (timer>0){
-    
-    const cell = document.getElementById(cell_id);
-    const image = cell.querySelector('img');
+  const cell = document.getElementById(cell_id);
+  const image = cell.querySelector('img');
+  if ((timer_setting == "down" && timer>0) || timer_setting == "up"){
     if (image.src.endsWith("back_of_card.png") & revealed<2){
       revealCard(image);
       console.log('revealed: ' + revealed);
@@ -94,10 +115,7 @@ function clicking(cell_id) {
       if(revealed==2){
       checkMatch(cell, image)
       }
-    }
-    // else if (!image.src.endsWith("back_of_card.png") && image.src.endsWith(".png")){
-    //   hideCard(image);
-    // } 
+    } 
     return revealed;
   }    
 };
@@ -144,13 +162,12 @@ function checkMatch(){
     if (image.getAttribute('revealed')=='true' && image.getAttribute('matched')=='false'){
       match_compare.push(image.getAttribute('match_code'));
     }
-    console.log('match compare array: ' + match_compare);
   }
   if (match_compare[1]-match_compare[0]==0){
     match_count = match_count + 1;
     last_match_code = match_compare[0];
     match_count_html.innerHTML = 'Match Count: ' + match_count;
-    revealed = 0;
+   
     correct_audio.play();
     for (let k=0; k<(card_rows*card_cols); k++){
       const cell = document.getElementById('cell_'+k);
@@ -192,12 +209,17 @@ function getRandom(min, max, assigned, matched) {
 
 
 function updateTimer(){  
-  timer = timer - 1;
-  game_timer_html.innerHTML = 'Timer: ' + timer + ' seconds';
-  if (timer == 0){
-    announcement.innerHTML = "Game over :(";
-    clearInterval(gameInterval);
+  if (timer_setting == "up"){
+    timer = timer + 1;
+  } else if (timer_setting == "down"){
+    timer = timer - 1;
+    if (timer == 0){
+      announcement.innerHTML = "Game over :(";
+      game_over_audio.play();
+      clearInterval(gameInterval);
+    }
   }
+  game_timer_html.innerHTML = 'Timer: ' + timer + ' seconds';
 };
 
 //function that starts the game. called when the new game button is clicked  
@@ -208,7 +230,7 @@ function startGame(){
   catch (ReferenceError){
   }
   var difficulty = document.querySelector('input[name="difficulty"]:checked').value;
-  timer = 120;
+  timer_setting = document.querySelector('input[name="timer"]:checked').value;
   match_count=0;
   revealed=0;
   announcement.innerHTML = "";

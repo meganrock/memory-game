@@ -14,10 +14,10 @@
             <h1>MEMORY</h1>
         </div>
         <div class="heading-rules">
-            <p>To start the game, select difficulty level and click the New Game button. 
+            <p>To start the game, select a difficulty level, a timer method, and click the New Game button. 
                 Click on cards to flip them over. Flip over two cards at a time to see if they’re a match. 
-                If they’re not a match, they will automatically flip back. Try to remember where you saw 
-                images before so you can match them faster later. Make as many matches as you can before time runs out. Good luck! </p>
+                If they’re not a match, they will automatically turn back over. Try to remember where you saw 
+                images before so you can match them faster. Good luck! </p>
         </div>
     </div>
     <!--img src="images/back_of_card.png" onclick="clicking(image.id)"-->
@@ -41,11 +41,26 @@
                     </div>
             </fieldset>
         </form>
+
+        <form>
+            <fieldset>
+                <legend>Select timer method:</legend>
+                    <div>
+                        <input type="radio" id="up" name="timer" value="up" checked />
+                        <label for="up">Track my time</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="down" name="timer" value="down"  />
+                        <label for="down">Beat the clock</label>
+                    </div>
+            </fieldset>
+        </form>
+
         <button id="gameButton" >New Game</button>
         <!-- <button id="showPictures" >Show Pictures</button> -->
         
         <h3 id="match_counter">Match Count: 0</h3>
-        <h3 id="game_timer">Timer: </h3>
+        <h3 id="game_timer">Timer: 0 seconds</h3>
         <h3 id="announcement"></h3>
         
     </div>
